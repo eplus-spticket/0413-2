@@ -1,0 +1,159 @@
+<!DOCTYPE html> 
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <style>
+        body {
+            max-width: 100vw;
+            margin: 0;
+            padding: 0;
+            font-weight: bold;
+            font-family: Arial;
+            font-size: clamp(115%, 3vw, 195%);
+        }
+
+        #time {
+            width: 100%;
+            color: white;
+            background-color: #32A7B3;
+            text-align: center;
+            padding: 1px 0;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #time img {
+            display: block;
+            margin: 0 auto;
+        }
+
+        #upper {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        #banner {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 750 / 312;
+            overflow: hidden;
+        }
+
+#banner-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(to bottom, white 0%, white 5.3%, transparent 5.3%), 
+        linear-gradient(to right, white 0%, white 2%, var(--banner-color) 2%, var(--banner-color) 98%, white 98%, white 100%), 
+        var(--banner-color);
+    transition: background-color 0.3s linear;
+    border-radius: 38px 38px 0 0; /* 左右上部の丸み */
+    overflow: hidden; /* 角の丸みを適用 */
+}
+
+
+
+
+        #banner-front {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            touch-action: pan-x;
+            transition: transform 0.3s ease-out;
+        }
+
+        #bottom {
+            width: 100%;
+            height: auto;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+<a href="eplus001-1.html"><img id="upper" src="maisu_choice.jpg" alt="Upper Image"></a>
+<p id="time"></p>
+
+<script type="text/javascript">
+(function(d){
+  var p = d.getElementsByTagName('p')[0];
+
+  setInterval(function(){
+    var date = new Date(),
+        str =
+          date.getFullYear() + '/' +
+          ('0' + (date.getMonth() + 1)).slice(-2) + '/' + 
+          ('0' + date.getDate()).slice(-2) + ' (日) ' +
+          ('0' + date.getHours()).slice(-2) + ':' +
+          ('0' + date.getMinutes()).slice(-2) + ':' +
+          ('0' + date.getSeconds()).slice(-2) + '.' +
+          ('00' + date.getMilliseconds()).slice(-2);
+
+    p.textContent = str;
+  }, 0);
+}(document));
+</script>
+
+<div id="banner">
+    <div id="banner-back"></div>
+    <img id="banner-front" src="top.jpg" alt="Banner Image">
+</div>
+
+<img id="bottom" src="eplus001-2.jpg" alt="Bottom Image">
+
+<script>
+    var startX;
+    var isSwiping = false;
+    var bannerFront = document.getElementById("banner-front");
+    var bannerBack = document.getElementById("banner-back");
+    var deltaX = 0;
+    var colors = ["#3789C3", "#459CA6", "#439F88", "#95C47E", "#F6EE72", "#E65958"];
+
+    bannerFront.addEventListener("touchstart", function (e) {
+        startX = e.touches[0].clientX;
+        isSwiping = true;
+        deltaX = 0;
+    });
+
+    bannerFront.addEventListener("touchmove", function (e) {
+        if (isSwiping) {
+            var currentX = e.touches[0].clientX;
+            deltaX = currentX - startX;
+            var step = Math.min(Math.max(Math.floor((Math.abs(deltaX) / 200) * colors.length), 0), colors.length - 1);
+            bannerBack.style.setProperty('--banner-color', colors[step]);
+
+            bannerFront.style.transition = "none";
+            bannerFront.style.transform = "translateX(" + deltaX + "px)";
+        }
+    });
+
+    bannerFront.addEventListener("touchend", function (e) {
+        if (isSwiping) {
+            isSwiping = false;
+
+            if (deltaX > 200 || (deltaX > 30 && Date.now() - e.timeStamp < 200)) {
+                window.location.href = "eplus001-3.html";
+            } else if (deltaX < -200 || (deltaX < -30 && Date.now() - e.timeStamp < 200)) {
+                window.location.href = "eplus001-3.html";
+            } else {
+                bannerFront.style.transition = "transform 0.3s ease-out";
+                bannerFront.style.transform = "translateX(0)";
+                bannerBack.style.setProperty('--banner-color', colors[0]);
+            }
+        }
+    });
+
+    bannerFront.addEventListener("touchstart", function (e) {
+        bannerFront.src = "gate.png";
+    });
+</script>
+</body>
+</html>
